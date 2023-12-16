@@ -13,6 +13,7 @@ import {
     INITIAL_VIEW_STATE,
     colorRange,
   } from "../../lib/mapconfig.js";
+import { Box } from '@chakra-ui/react'
 
 export const MapComponent = ({ latitude, longitude }) => {
 
@@ -27,21 +28,21 @@ export const MapComponent = ({ latitude, longitude }) => {
       };
 
     return(
-        <div>
-             <div>
+        <Box cursor={'pointer'}>
+             <Box>
                 <DeckGL
                     effects={[lightingEffect]}
                     initialViewState={initialViewState}
                     controller={true}
                 >
-                    <Map
+                    <Map cursor='pointer'
                     className=""
                     controller={true}
                     mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}
-                    mapStyle="mapbox://styles/petherem/cl2hdvc6r003114n2jgmmdr24"
+                    mapStyle="mapbox://styles/mapbox/outdoors-v11"
                     ></Map>
                 </DeckGL>
-            </div>
-        </div>
+            </Box>
+        </Box>
     )
 }

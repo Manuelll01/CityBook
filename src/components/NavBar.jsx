@@ -21,7 +21,7 @@ import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons'
 import Link from 'next/link'
 
 
-const Links = [ {text: 'Orase', href: "orase"}, {text: 'Favoritele mele', href: "favorite"}, {text: 'Cauta', href: 'cauta'}]
+const Links = [ {text: 'Favoritele mele', href: "/favorite"}, {text: 'Cauta', href: '/cauta'}]
 
 const NavLink = (props) => {
   const { children, href } = props
@@ -86,14 +86,9 @@ export default function NavBar() {
                 />
               </MenuButton>
               <MenuList>
-                <MenuItem>Link 1</MenuItem>
-                <MenuItem>Link 2</MenuItem>
-                <MenuDivider />
-                <MenuItem>Link 3</MenuItem>
-                <MenuItem>Link 4</MenuItem>
-                <MenuDivider />
-                <MenuItem>Link 5</MenuItem>
-                <MenuItem>Link 6</MenuItem>
+              {Links.map((link) => (
+                <NavLink key={link.href}  href={link.href}>{link.text}</NavLink>
+              ))}
               </MenuList>
             </Menu>
           </Flex>

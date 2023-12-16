@@ -1,11 +1,15 @@
 "use client"
-import useSWR from 'swr'
+import useSWR, { mutate } from 'swr'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react';
+import { GoBookmark, GoBookmarkFill } from "react-icons/go";
+import { FaBookmark } from "react-icons/fa6";
+import { Spinner } from '@chakra-ui/react'
 import {
     Box,
     Center,
-    Flex
+    Flex,
+    Grid
   } from '@chakra-ui/react'
 import Link from 'next/link';
 import CardPost from './CardPost';
@@ -15,46 +19,90 @@ const fetcher = url => fetch(url).then(r => r.json())
 
 const ListaOrase = (props) => {
 
+    const handleAddPost = async (nume, id, provincie, tara, latitudine, longitudine) => {
+        try {
+          const response = await fetch('/api/addPost', {
+             method: 'POST',
+             headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              cityName: nume,
+              cityId: id,
+              cityProvince: provincie,
+              cityCountry: tara,
+              cityLatitude: latitudine,
+              cityLongitude: longitudine
+            }),
+         }); 
+         mutate(`http://localhost:3000/api/saved`);
+        } catch (error) {
+          console.error('Error adding post:', error);
+        }
+      };
+      const handleDeletePost = async (id) => {
+        try {
+          const response = await fetch('/api/deletePost', {
+             method: 'DELETE',
+             headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              cityId: id
+            }),
+         }); 
+         mutate(`http://localhost:3000/api/saved`);
+        } catch (error) {
+          console.error('Error adding post:', error);
+        }
+      };
 
-
-    const {data: orase, error, isLoading} = useSWR(`https://geocoding-api.open-meteo.com/v1/search?name=${props.numeOras}&count=7&language=en&format=json`, fetcher)
+    const {data: orase, error, isLoading} = useSWR(`https://geocoding-api.open-meteo.com/v1/search?name=${props.numeOras}&count=5&language=en&format=json`, fetcher)
+    const {data: favourites, error2, isLoading2} = useSWR(`http://localhost:3000/api/saved`, fetcher)
     if (error) return <div><p>error... {error}</p></div>
-    if (isLoading) return <div>loading...</div>
+    if (error2) return <div><p>error2... {error2}</p></div>
+    if (isLoading) return <Flex justifyContent={'center'} alignItems={'center'} height={'100vh'}><Spinner width={'150px'} height={'150px'} thickness="10px"/></Flex>
+    if (isLoading2) return <Flex justifyContent={'center'} alignItems={'center'} height={'100vh'}><Spinner width={'150px'} height={'150px'} thickness="10px"/></Flex>
+
+    if (!favourites || favourites.length === 0) {
+        return <Flex justifyContent={'center'} alignItems={'center'} height={'100vh'}><Spinner width={'150px'} height={'150px'} thickness="10px"/></Flex>;
+      }
+
+    const cityIds = favourites.map(favourite => favourite.cityId);
     console.log(orase);
     return(
-        <Flex flexWrap={'wrap'} padding={'20px'}>
+        <Box >  
             {props.numeOras  !== '' && (
-                <Flex flexWrap={'wrap'} padding={'20px'}>
+                <Grid gridTemplateColumns={{ base: "1fr", sm: "1fr 1fr", md: "1fr 1fr 1fr", lg: "1fr 1fr 1fr 1fr", xl: "1fr 1fr 1fr 1fr 1fr" }} padding={'20px'}>
                 {orase.results === undefined ? (
                     <p>Nu am gasit nici un oras...</p>
                 ) : (
                     orase.results.map((post, index) => (
-                        <Box border={'1px solid black'} borderRadius={'40px'} padding={'10px 20px'} key={post.id} margin={'10px'}>
-                            <Link href={'/' + post.name + '/' + post.id} >
-                                <h1>Oras cu numarul {index + 1} din lista</h1>
-                                <h2>Judet: {post.admin1}</h2>
-                                <h2>Nume: {post.name}</h2>
-                                <h2>Țară: {post.country}</h2>
-                                <h2>Cod Țară: {post.country_code}</h2>
-                                <h2>Populatie: {post.population ? post.population + ' de catateni' : 'populatia nu este cunoscuta' }</h2>
-                                <h2>Latitudine: {post.latitude}</h2>
-                                <h2>Longitudine: {post.longitude}</h2>
-                                <h2>Elevatie: {post.elevation}</h2>
-                                <h2>Fus orar: {post.timezone}</h2>
-
-                            </Link>
-                            <Box position={'relative'} height={'300px'} width={'300px'} >
-                                <MapComponent latitude={post.latitude} longitude={post.longitude}/>
+                        <Box>
+                            
+                            <Box  key={post.id} border={'1px solid black'} overflow={'hidden'} borderRadius={'15px'} margin={'10px'}>
+                                <Box position={'relative'}  width={'100%'} aspectRatio={'7/5'}>
+                                    <MapComponent latitude={post.latitude} longitude={post.longitude}/>
+                                </Box>
+                                <Box padding={'5px 15px'}>
+                                    <Box  >
+                                        <Link href={'/' + post.name + '/' + post.id} >{post.admin1}, {post.name}, {post.country}</Link>
+                                        <Flex fontSize={'1.5rem'} justifyContent={'flex-end'} paddingTop={'5px'}>  
+                                             {cityIds.includes((post.id).toString()) ? <Box  onClick={() => handleDeletePost(post.id)} cursor={'pointer'}><GoBookmarkFill /></Box>
+                                             : <Box onClick={() => handleAddPost(post.name, post.id, post.admin1, post.country, post.latitude, post.longitude)} cursor={'pointer'}><GoBookmark /></Box>}
+                                        </Flex>
+                                    </Box>
+                                </Box>
                             </Box>
                         </Box>
+                        
                         // <CardPost img={'/img/Rome.jpg'}/>  /*Aici o sa vina  */ pk.eyJ1IjoicGFjcGFjMDEiLCJhIjoiY2xwZnp3djRoMW1hcjJxcHJ3eXlncHYzNSJ9.9B7lRUlIb61vWGmYPMI1bg
                     ))
                 )}
-                </Flex>
+                </Grid>
             )}
 
-
-        </Flex>
+        </Box>
         
     )
 

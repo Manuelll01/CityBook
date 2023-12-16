@@ -12,6 +12,8 @@ import {
   useColorModeValue,
   createIcon,
 } from '@chakra-ui/react'
+import Link from 'next/link'
+
 
 export default function HeroSection() {
   return (
@@ -32,9 +34,8 @@ export default function HeroSection() {
             </Text>
           </Heading>
           <Text color={'gray.500'}>
-            Monetize your content by charging your most loyal readers and reward them
-            loyalty points. Give back to your loyal readers by granting them access to
-            your pre-releases and sneak-peaks.
+          Descoperă orașe într-un univers captivant, unde fiecare stradă ascunde povești fascinante.
+           Află secretele și particularitățile locurilor preferate cu informații incitante. 🌍✨
           </Text>
           <Stack
             direction={'column'}
@@ -42,7 +43,8 @@ export default function HeroSection() {
             align={'center'}
             alignSelf={'center'}
             position={'relative'}>
-            <Button
+            <Button 
+              
               colorScheme={'green'}
               bg={'green.400'}
               rounded={'full'}
@@ -50,11 +52,13 @@ export default function HeroSection() {
               _hover={{
                 bg: 'green.500',
               }}>
-              Get Started
+              <Link href={'/cauta'}>
+                Caută
+              </Link>
             </Button>
-            <Button variant={'link'} colorScheme={'blue'} size={'sm'}>
+            {/* <Button variant={'link'} colorScheme={'blue'} size={'sm'}>
               Learn more
-            </Button>
+            </Button> */}
             <Box>
               <Icon
                 as={Arrow}
@@ -71,7 +75,7 @@ export default function HeroSection() {
                 right={'-125px'}
                 top={'-15px'}
                 transform={'rotate(10deg)'}>
-                Starting at $15/mo
+                Hurry up!!!
               </Text>
             </Box>
           </Stack>

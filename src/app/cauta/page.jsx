@@ -5,21 +5,32 @@ import {
     Box,
     Center,
     Flex,
-    MenuDivider,
-    Input, 
-    Menu
+    // MenuDivider,
+    Input,
+    Spinner, 
+    // Menu
 } from '@chakra-ui/react'
 import ListaOrase from '@/components/listaOrase';
 import { useState } from 'react';
 import Link from 'next/link';
-import { MapComponent } from '@/components/MapComponent';
+import dynamic from 'next/dynamic';
+// import { MapComponent } from '@/components/MapComponent';
+// import HeroSection2 from '@/components/HeroSection2';
+
+
+import HeroSection2 from '@/components/HeroSection2';
+
+// const HeroSection2 = dynamic(() => import('../../components/HeroSection2'), {
+//     loading: () => <Flex justifyContent={'center'} alignItems={'center'} height={'100vh'}><Spinner width={'150px'} height={'150px'} thickness="10px"/></Flex>,
+//     ssr: false, // Set to false to render on the client side
+//   });
 
 const fetcher = url => fetch(url).then(r => r.json())
 
 export default function Search(){
     const [ continutInput, setContinutInput ] = useState('')
     const [ numeOras, setNumeOras ] = useState('')
-    const {data: orase, error} = useSWR(`https://geocoding-api.open-meteo.com/v1/search?name=${continutInput}&count=7&language=en&format=json`, fetcher)
+    const {data: orase, error} = useSWR(`https://geocoding-api.open-meteo.com/v1/search?name=${continutInput}&count=5&language=en&format=json`, fetcher)
 
     const contentHandler = () => {
         setNumeOras(continutInput)
@@ -31,15 +42,18 @@ export default function Search(){
             contentHandler()
         }
       };
+
+      
     //   if (error) return <div><p>error... {error}</p></div>
+
     return(
         <div>
             <Center  margin={'20px 0'}>
-                <Flex width={'1000px'} position={'relative'} align={"center"} >
+                <Flex width={'1000px'} position={'relative'} align={"center"} padding={'0 10px'}>
                     <Input onChange={(e) => setContinutInput(e.target.value)}
                         onKeyDown={handleKeyPress}
                         padding={'10px 15px'} borderRadius={'40px 0 0 40px'}
-                        border={'1px solid grey'} borderLeft={'none'}
+                        border={'1px solid grey'} borderRight={'none'}
                         placeholder='Search' />
 
                     <Box onClick={contentHandler} 
@@ -78,10 +92,10 @@ export default function Search(){
             </Center>
            
 
-            <ListaOrase numeOras={numeOras} />
-            {/* <Box position={'relative'} minHeight={'50vh'}>
-                <MapComponent/>
-            </Box> */}
+            {numeOras === '' ? (<Flex flexDir={'column'}>
+                <HeroSection2/>
+            </Flex>)
+            : (<ListaOrase numeOras={numeOras} />)}
         </div>
     )
 }
