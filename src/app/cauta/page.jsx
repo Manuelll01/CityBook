@@ -5,17 +5,11 @@ import {
     Box,
     Center,
     Flex,
-    // MenuDivider,
     Input,
-    Spinner, 
-    // Menu
 } from '@chakra-ui/react'
 import ListaOrase from '@/components/listaOrase';
 import { useState } from 'react';
 import Link from 'next/link';
-import dynamic from 'next/dynamic';
-// import { MapComponent } from '@/components/MapComponent';
-// import HeroSection2 from '@/components/HeroSection2';
 
 
 import HeroSection2 from '@/components/HeroSection2';

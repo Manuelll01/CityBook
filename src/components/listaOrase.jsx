@@ -1,9 +1,7 @@
 "use client"
 import useSWR, { mutate } from 'swr'
-import axios from 'axios'
 import React, { useEffect, useState } from 'react';
 import { GoBookmark, GoBookmarkFill } from "react-icons/go";
-import { FaBookmark } from "react-icons/fa6";
 import { Spinner } from '@chakra-ui/react'
 import {
     Box,
@@ -12,7 +10,6 @@ import {
     Grid
   } from '@chakra-ui/react'
 import Link from 'next/link';
-import CardPost from './CardPost';
 import { MapComponent } from './MapComponent';
 
 const fetcher = url => fetch(url).then(r => r.json())
@@ -69,7 +66,6 @@ const ListaOrase = (props) => {
       }
 
     const cityIds = favourites.map(favourite => favourite.cityId);
-    console.log(orase);
     return(
         <Box >  
             {props.numeOras  !== '' && (
@@ -96,7 +92,7 @@ const ListaOrase = (props) => {
                             </Box>
                         </Box>
                         
-                        // <CardPost img={'/img/Rome.jpg'}/>  /*Aici o sa vina  */ pk.eyJ1IjoicGFjcGFjMDEiLCJhIjoiY2xwZnp3djRoMW1hcjJxcHJ3eXlncHYzNSJ9.9B7lRUlIb61vWGmYPMI1bg
+                       
                     ))
                 )}
                 </Grid>

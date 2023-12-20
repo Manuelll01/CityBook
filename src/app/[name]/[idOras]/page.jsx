@@ -13,6 +13,7 @@ const Oras = () => {
   const params = useParams()
   const { name, idOras } = params;
   const [selectedOras, setSelectedOras] = useState()
+  const [airQuality, setAirQuality] = useState()
 
   const handleAddPost = async (nume, id, provincie, tara, latitudine, longitudine) => {
     try {
@@ -71,9 +72,9 @@ const Oras = () => {
           `https://api.open-meteo.com/v1/forecast?latitude=${selectedOras1.latitude}&longitude=${selectedOras1.longitude}&current=temperature_2m,wind_speed_10m,relative_humidity_2m,apparent_temperature,rain,cloud_cover&hourly=temperature_2m,relative_humidity_2m,apparent_temperature,wind_speed_10m,precipitation_probability,rain,cloud_cover`
           );
           setSelectedOras(response)
+        const response2 = await fetcher(`https://api.waqi.info/feed/geo:${selectedOras1.latitude};${selectedOras1.longitude}/?token=f1235b864598db150bffca6ba1bf293fe02d2736`)
+        setAirQuality(response2)
         
-        console.log(orase);
-        console.log(response);
       } catch (error) {
         console.error('Error making second API call:', error);
       }
@@ -83,14 +84,30 @@ const Oras = () => {
       makeSecondAPICall();
     }
   }, [orase]);
+
+  const getAirQualityText = (value) => {
+    if (value >= 0 && value <= 50) {
+      return 'Bun';
+    } else if (value >= 51 && value <= 100) {
+      return 'Moderat';
+    } else if (value >= 101 && value <= 150) {
+      return 'Nesanatos pentru grupele sensibile';
+    } else if (value >= 151 && value <= 200) {
+      return 'Nesanatos';
+    } else if (value >= 201 && value <= 300) {
+      return 'Foarte nesanatos';
+    } else {
+      return 'Periculos';
+    }
+  };
   if (error) return <div><p>error... {error}</p></div>
   if (error2) return <div><p>error2... {error2}</p></div>
   if (error3) return <div><p>error2... {error3}</p></div>
-  if (isLoading) return <Flex justifyContent={'center'} alignItems={'center'} height={'100vh'}><Spinner width={'150px'} height={'150px'} thickness="10px"/></Flex>
-  if (isLoading3) return <Flex justifyContent={'center'} alignItems={'center'} height={'100vh'}><Spinner width={'150px'} height={'150px'} thickness="10px"/></Flex>
+  if (isLoading && isLoading3) return <Flex justifyContent={'center'} alignItems={'center'} height={'100vh'}><Spinner width={'150px'} height={'150px'} thickness="10px"/></Flex>
   if (!favourites || favourites.length === 0) {
     return <Flex justifyContent={'center'} alignItems={'center'} height={'100vh'}><Spinner width={'150px'} height={'150px'} thickness="10px"/></Flex>;
   }
+  if (!airQuality || favourites.length === 0) return <Flex justifyContent={'center'} alignItems={'center'} height={'100vh'}><Spinner width={'150px'} height={'150px'} thickness="10px"/></Flex>
   return (
     <Box padding={{base: "20px 10px", sm: '25px', md: '25px 50px', xl: '25px 75px'}} backgroundImage={'url(/img/mountains.jpg) '} backgroundSize={'cover'} color={'white'} minHeight={'100vh'}>
       
@@ -112,7 +129,9 @@ const Oras = () => {
                       <h2>Fus orar: {oras.timezone}</h2>
                       <h2>Cod Țară: {oras.country_code}</h2>
                       <h2>Altitudine: {oras.elevation} metrii deasupra nivelului mării.</h2>
-                      
+                      {airQuality && airQuality.data.iaqi.pm25.v ?
+                         <p>Calitatea aerului: {getAirQualityText(airQuality.data.iaqi.pm25.v) } ({airQuality.data.iaqi.pm25.v})</p>
+                         : 'Din pacate nu avem la Dispozitie calitatea aerului acestui oras'}
                     </Box>
 
                       {selectedOras   && (
@@ -124,7 +143,9 @@ const Oras = () => {
                               <p>Viteza vantului: {selectedOras.current.wind_speed_10m } {selectedOras.current_units.wind_speed_10m}</p>
                         </Box>
                       )}
+                      
                   </Flex>
+                  
                   <Flex justifyContent={'space-between'} >
                     <Heading>Future weather predictions</Heading>
                     

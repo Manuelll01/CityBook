@@ -1,11 +1,9 @@
 'use client'
-
-import Image from 'next/image'
 import {
   Box,
 } from '@chakra-ui/react'
 
-export default function CardPost(props) {
+export default function Footer() {
   return (
    <Box>
         footer

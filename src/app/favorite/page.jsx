@@ -15,8 +15,6 @@ async function fetchFavorite() {
 export default async function Favourites(){
     const oraseFavorite = await fetchFavorite();
 
-    console.log(oraseFavorite);
-
     return(
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', gap: '15px', padding: '10px 20px' }}>
                 {oraseFavorite.map((oras) => (
