@@ -129,7 +129,7 @@ const Oras = () => {
                       <h2>Fus orar: {oras.timezone}</h2>
                       <h2>Cod Țară: {oras.country_code}</h2>
                       <h2>Altitudine: {oras.elevation} metrii deasupra nivelului mării.</h2>
-                      {airQuality && airQuality.data.iaqi.pm25.v ?
+                      {airQuality.data.iaqi.pm25  && airQuality.data.iaqi.pm25.v ?
                          <p>Calitatea aerului: {getAirQualityText(airQuality.data.iaqi.pm25.v) } ({airQuality.data.iaqi.pm25.v})</p>
                          : 'Din pacate nu avem la Dispozitie calitatea aerului acestui oras'}
                     </Box>
